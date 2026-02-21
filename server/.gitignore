@@ -1,0 +1,86 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+
+# =========================
+# Virtual Environments
+# =========================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# =========================
+# FastAPI / Uvicorn
+# =========================
+*.log
+uvicorn.log
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+pytestdebug.log
+
+# =========================
+# Mypy / Type Checking
+# =========================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# =========================
+# Ruff / Black
+# =========================
+.ruff_cache/
+.black_cache/
+
+# =========================
+# Databases
+# =========================
+*.sqlite3
+*.db
+
+# =========================
+# Docker
+# =========================
+docker-compose.override.yml
+
+# =========================
+# OS files
+# =========================
+Thumbs.db
