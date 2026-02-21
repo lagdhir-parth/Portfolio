@@ -10,21 +10,33 @@ def ask_ai(prompt: str) -> str:
         if not OPENROUTER_API_KEY:
             raise RuntimeError("OPENROUTER_API_KEY is not set")
         
+        logger.info(f"Calling OpenRouter API with model: gpt-3.5-turbo")
+        
         response = requests.post(
             OPENROUTER_URL,
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://portfolio.local",
+                "X-Title": "Portfolio AI"
             },
             json={
-                "model": "openrouter/free",
+                "model": "gpt-3.5-turbo",
                 "messages": [
                     {"role": "user", "content": prompt}
-                ]
+                ],
+                "max_tokens": 500
             },
             timeout=30
         )
 
+        logger.info(f"API Response Status: {response.status_code}")
+        
+        if response.status_code == 401:
+            logger.error("401 Unauthorized - Invalid or expired API key")
+            logger.error(f"API Key starts with: {OPENROUTER_API_KEY[:20]}...")
+            raise RuntimeError("OpenRouter API key is invalid or expired. Check your OPENROUTER_API_KEY in .env file")
+        
         response.raise_for_status()
         data = response.json()
         
@@ -34,6 +46,9 @@ def ask_ai(prompt: str) -> str:
         
         return data["choices"][0]["message"]["content"]
     
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP Error {e.response.status_code}: {e.response.text}")
+        raise
     except requests.exceptions.RequestException as e:
         logger.error(f"API Request failed: {str(e)}")
         raise
