@@ -35,9 +35,12 @@ const ChatBotButton: React.FC = () => {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("http://localhost:8000/chat", {
-        message: input,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/chat`,
+        {
+          message: input,
+        },
+      );
 
       const replyText = response.data.reply;
 
@@ -70,6 +73,7 @@ const ChatBotButton: React.FC = () => {
       ]);
     } finally {
       setIsLoading(false);
+      setIsTyping(false);
     }
   };
 

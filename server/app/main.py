@@ -4,6 +4,7 @@ from app.api.chat import router as chat_router
 
 app = FastAPI(title="Portfolio AI Backend")
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
