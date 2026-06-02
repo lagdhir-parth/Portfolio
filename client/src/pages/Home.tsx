@@ -90,7 +90,7 @@ const Hero: React.FC = () => {
               to="/contact"
               className="group bg-(--primary-accent) hover:bg-(--accent-hover) text-(--color-secondary) px-8 py-4 rounded-2xl font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
             >
-              Hire Me
+              Let's Talk
             </Link>
             <Link
               to="/projects"
