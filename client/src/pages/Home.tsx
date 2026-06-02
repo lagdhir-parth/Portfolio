@@ -16,6 +16,10 @@ const Hero: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
+    document.title = "Home - Lagdhir Parth";
+  }, []);
+
+  useEffect(() => {
     const currentRole = roles[roleIndex];
     const speed = isDeleting ? 50 : 100;
 

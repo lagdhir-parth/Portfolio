@@ -1,8 +1,12 @@
 // src/pages/About.tsx
 import { motion } from "framer-motion";
 import { LuDownload } from "react-icons/lu";
+import { useEffect } from "react";
 
 const About: React.FC = () => {
+  useEffect(() => {
+    document.title = "About - Lagdhir Parth";
+  }, []);
   return (
     <motion.main
       initial={{ opacity: 0 }}

@@ -1,10 +1,63 @@
 // src/pages/Contact.tsx
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { FaLinkedin, FaGithub, FaPhoneAlt } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { FiMapPin } from "react-icons/fi";
-import { useState } from "react";
 import { sendContactEmail } from "../api/index";
+import { useEffect } from "react";
+
+type ContactFormData = {
+  name: string;
+  email: string;
+  mobileNumber: string;
+  subject: string;
+  message: string;
+};
+
+type ContactFormErrors = Partial<Record<keyof ContactFormData, string>>;
+
+type SubmissionState =
+  | { type: "idle"; message: string }
+  | { type: "success"; message: string }
+  | { type: "error"; message: string };
+
+const initialFormData: ContactFormData = {
+  name: "",
+  email: "",
+  mobileNumber: "",
+  subject: "",
+  message: "",
+};
+
+const validateForm = (formData: ContactFormData) => {
+  const errors: ContactFormErrors = {};
+
+  if (!formData.name.trim()) {
+    errors.name = "Please enter your name.";
+  }
+
+  if (!formData.email.trim()) {
+    errors.email = "Email is required.";
+  } else {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      errors.email = "Enter a valid email address.";
+    }
+  }
+
+  if (!formData.subject.trim()) {
+    errors.subject = "Subject is required.";
+  }
+
+  if (!formData.message.trim()) {
+    errors.message = "Please write a short message.";
+  } else if (formData.message.trim().length < 10) {
+    errors.message = "Message should be at least 10 characters long.";
+  }
+
+  return errors;
+};
 
 const contactInfo = [
   {
@@ -35,34 +88,96 @@ const socials = [
 ];
 
 const Contact: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    mobileNumber: "",
-    subject: "",
+  const [formData, setFormData] = useState<ContactFormData>(initialFormData);
+  const [fieldErrors, setFieldErrors] = useState<ContactFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionState, setSubmissionState] = useState<SubmissionState>({
+    type: "idle",
     message: "",
   });
 
+  useEffect(() => {
+    document.title = "Contact - Lagdhir Parth";
+  }, []);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (
+      submissionState.type === "success" ||
+      submissionState.type === "error"
+    ) {
+      // Removed 'const' to update the outer 'timer' variable
+      timer = setTimeout(() => {
+        setSubmissionState({ type: "idle", message: "" });
+      }, 5000);
+    }
+
+    return () => {
+      // This will now correctly clear the timer if it was set
+      clearTimeout(timer);
+    };
+  }, [submissionState]);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const fieldName = name as keyof ContactFormData;
+
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+
+    if (fieldErrors[fieldName]) {
+      setFieldErrors((prev) => {
+        const nextErrors = { ...prev };
+        delete nextErrors[fieldName];
+        return nextErrors;
+      });
+    }
+
+    if (submissionState.type !== "idle") {
+      setSubmissionState({ type: "idle", message: "" });
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle form submission, e.g., send data to an API
-    console.log("Form submitted:", formData);
-    await sendContactEmail(formData);
-    // Reset form after submission
-    setFormData({
-      name: "",
-      email: "",
-      mobileNumber: "",
-      subject: "",
+    const nextErrors = validateForm(formData);
+
+    if (Object.keys(nextErrors).length > 0) {
+      setFieldErrors(nextErrors);
+      setSubmissionState({
+        type: "error",
+        message: "Please fix the highlighted fields and try again.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFieldErrors({});
+    setSubmissionState({
+      type: "idle",
       message: "",
     });
+
+    try {
+      await sendContactEmail(formData);
+
+      setFormData(initialFormData);
+      setSubmissionState({
+        type: "success",
+        message: "Message sent successfully. I’ll get back to you soon.",
+      });
+    } catch (error) {
+      console.error("Error sending contact form:", error);
+      setSubmissionState({
+        type: "error",
+        message:
+          "Something went wrong while sending your message. Please try again in a moment.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -142,66 +257,138 @@ const Contact: React.FC = () => {
             Send Message
           </h3>
 
+          {submissionState.type !== "idle" && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`rounded-2xl border px-5 py-4 text-sm font-medium ${
+                submissionState.type === "success"
+                  ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-200"
+                  : "border-rose-400/40 bg-rose-500/10 text-rose-200"
+              }`}
+            >
+              {submissionState.message}
+            </motion.div>
+          )}
+
           {/* Row 1: Name Field (Full width on mobile, spans full grid or splits depending on layout preference) */}
           <div className="w-full">
             <input
               type="text"
               name="name"
+              autoComplete="name"
+              aria-invalid={Boolean(fieldErrors.name)}
               placeholder="Your Name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
+              className={`w-full p-5 bg-(--color-hover)/50 backdrop-blur border rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300 ${
+                fieldErrors.name
+                  ? "border-rose-400/60 focus:border-rose-400"
+                  : "border-(--chat-border)/50 focus:border-(--primary-accent)"
+              }`}
             />
+            {fieldErrors.name && (
+              <p className="mt-2 text-sm text-rose-300">{fieldErrors.name}</p>
+            )}
           </div>
 
           {/* Row 2: Email & Mobile Number (Side-by-side on desktop, stacked on mobile) */}
           <div className="grid md:grid-cols-2 gap-6">
-            <input
-              type="email"
-              name="email"
-              placeholder="your.email@example.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
-            />
-            <input
-              type="tel"
-              name="mobileNumber"
-              placeholder="Mobile Number"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-              className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
-            />
+            <div>
+              <input
+                type="email"
+                name="email"
+                autoComplete="email"
+                aria-invalid={Boolean(fieldErrors.email)}
+                placeholder="your.email@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                className={`w-full p-5 bg-(--color-hover)/50 backdrop-blur border rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300 ${
+                  fieldErrors.email
+                    ? "border-rose-400/60 focus:border-rose-400"
+                    : "border-(--chat-border)/50 focus:border-(--primary-accent)"
+                }`}
+              />
+              {fieldErrors.email && (
+                <p className="mt-2 text-sm text-rose-300">
+                  {fieldErrors.email}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="tel"
+                name="mobileNumber"
+                autoComplete="tel"
+                placeholder="Mobile Number"
+                value={formData.mobileNumber}
+                onChange={handleChange}
+                className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
+              />
+            </div>
           </div>
 
           {/* Row 3: Subject */}
-          <input
-            type="text"
-            name="subject"
-            placeholder="Subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
-          />
+          <div>
+            <input
+              type="text"
+              name="subject"
+              autoComplete="off"
+              aria-invalid={Boolean(fieldErrors.subject)}
+              placeholder="Subject"
+              value={formData.subject}
+              onChange={handleChange}
+              className={`w-full p-5 bg-(--color-hover)/50 backdrop-blur border rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300 ${
+                fieldErrors.subject
+                  ? "border-rose-400/60 focus:border-rose-400"
+                  : "border-(--chat-border)/50 focus:border-(--primary-accent)"
+              }`}
+            />
+            {fieldErrors.subject && (
+              <p className="mt-2 text-sm text-rose-300">
+                {fieldErrors.subject}
+              </p>
+            )}
+          </div>
 
           {/* Row 4: Message Textarea */}
-          <textarea
-            name="message"
-            rows={6}
-            placeholder="Your message..."
-            value={formData.message}
-            onChange={handleChange}
-            className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300 resize-vertical"
-          />
+          <div>
+            <textarea
+              name="message"
+              rows={6}
+              aria-invalid={Boolean(fieldErrors.message)}
+              placeholder="Your message..."
+              value={formData.message}
+              onChange={handleChange}
+              className={`w-full p-5 bg-(--color-hover)/50 backdrop-blur border rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300 resize-vertical ${
+                fieldErrors.message
+                  ? "border-rose-400/60 focus:border-rose-400"
+                  : "border-(--chat-border)/50 focus:border-(--primary-accent)"
+              }`}
+            />
+            {fieldErrors.message && (
+              <p className="mt-2 text-sm text-rose-300">
+                {fieldErrors.message}
+              </p>
+            )}
+          </div>
 
           {/* Submit Button */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full bg-linear-to-r from-(--primary-accent) to-(--accent-hover) text-(--color-secondary) p-6 rounded-2xl font-bold text-xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
+            disabled={isSubmitting}
+            className="w-full bg-linear-to-r from-(--primary-accent) to-(--accent-hover) text-(--color-secondary) p-6 rounded-2xl font-bold text-xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-70 disabled:shadow-lg flex items-center justify-center gap-3"
           >
-            Send Message
+            {isSubmitting && (
+              <span
+                className="h-5 w-5 animate-spin rounded-full border-2 border-(--color-secondary)/30 border-t-(--color-secondary)"
+                aria-hidden="true"
+              />
+            )}
+            {isSubmitting ? "Sending..." : "Send Message"}
           </motion.button>
         </motion.form>
       </div>

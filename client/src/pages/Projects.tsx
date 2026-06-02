@@ -1,6 +1,7 @@
 // src/pages/Projects.tsx
 import { motion } from "framer-motion";
 import { LuGithub, LuExternalLink } from "react-icons/lu";
+import { useEffect } from "react";
 
 const projects = [
   {
@@ -155,6 +156,9 @@ const projects = [
 ];
 
 const Projects: React.FC = () => {
+  useEffect(() => {
+    document.title = "Projects - Lagdhir Parth";
+  }, []);
   return (
     <motion.main
       initial={{ opacity: 0, y: 30 }}
