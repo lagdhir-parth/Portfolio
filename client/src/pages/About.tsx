@@ -32,7 +32,7 @@ const About: React.FC = () => {
           className="text-center lg:text-left"
         >
           <img
-            src="/ProfilePic.png"
+            src="/ProfilePic.webp"
             alt="Parth Lagdhir"
             className="w-80 h-80 mx-auto lg:mx-0 rounded-3xl bg-(--color-hover) p-4 shadow-2xl border-4 border-(--primary-accent)/20"
           />

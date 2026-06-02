@@ -110,7 +110,7 @@ const Hero: React.FC = () => {
         >
           {/* Profile Image */}
           <img
-            src="/ProfilePic.png" // Replace with your photo
+            src="/ProfilePic.webp" // Replace with your photo
             alt="Lagdhir Parth - Developer"
             className="size-full rounded-2xl object-cover shadow-xl"
           />
