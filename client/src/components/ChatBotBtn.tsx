@@ -1,10 +1,11 @@
 // src/components/ChatBotButton.tsx
-import axios from "axios";
 import { useState, useRef, useEffect } from "react";
-import { X, MessageCircleMore } from "lucide-react";
+import { LuMessageCircleMore } from "react-icons/lu";
+import { FaX } from "react-icons/fa6";
 import { AnimatePresence, motion } from "motion/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { sendChatMessage } from "../api/index";
 
 interface ChatMessage {
   role: "user" | "ai";
@@ -35,15 +36,7 @@ const ChatBotButton: React.FC = () => {
     setIsTyping(true);
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/chat`,
-        {
-          message: input,
-        },
-      );
-
-      const replyText = response.data.reply;
-
+      const replyText = await sendChatMessage(input);
       // Typewriter effect
       let i = 0;
       const typeInterval = setInterval(() => {
@@ -84,8 +77,8 @@ const ChatBotButton: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-(--primary-accent) hover:bg-(--accent-hover) rounded-full shadow-2xl hover:shadow-3xl border-4 border-(--color-secondary)/20 backdrop-blur-sm transition-all duration-500 active:scale-95 flex items-center justify-center group cursor-pointer"
       >
-        <MessageCircleMore
-          className={`${isOpen ? "rotate-45" : ""} transition-transform duration-300`}
+        <LuMessageCircleMore
+          className={`${isOpen ? "rotate-45" : ""} size-6 transition-transform duration-300`}
         />
         <div className="absolute -top-10 -right-2 bg-(--primary-text)/90 text-(--color-secondary) px-3 py-1 rounded-full text-xs font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
           Ask AI
@@ -133,7 +126,7 @@ const ChatBotButton: React.FC = () => {
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-(--color-hover)/50 rounded-xl transition-all duration-200 hover:scale-110 cursor-pointer"
                 >
-                  <X className="text-(--primary-text)" />
+                  <FaX className="text-(--primary-text)" />
                 </button>
               </div>
             </div>

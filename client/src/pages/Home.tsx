@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 
 const roles = [
-  "Full-Stack Developer",
+  "Freelance Web Developer",
+  "Full-Stack Freelancer",
   "MERN Stack Specialist",
-  "React Enthusiast",
-  "B.Tech Student",
+  "React & Node.js Expert",
 ];
 
 const Hero: React.FC = () => {
@@ -73,39 +73,28 @@ const Hero: React.FC = () => {
               />
             </motion.p>
             <p className="text-xl md:text-2xl text-(--muted-text) max-w-md mx-auto md:mx-0 leading-relaxed">
-              2nd Year B.Tech Computer Engineering | Building scalable MERN apps
-              like MediStream HMS | Rajkot, Gujarat
+              Freelance full-stack developer building production-ready MERN
+              applications, APIs and responsive UIs. I help startups and small
+              businesses ship reliable web products — available for hire
+              remotely or on-site in Rajkot, Gujarat.
             </p>
           </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
             <Link
-              to="/projects"
+              to="/contact"
               className="group bg-(--primary-accent) hover:bg-(--accent-hover) text-(--color-secondary) px-8 py-4 rounded-2xl font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
             >
-              View Projects
-              <svg
-                className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
+              Hire Me
             </Link>
-            <a
-              href="/Resume.pdf" // Add your resume
-              download
+            <Link
+              to="/projects"
               className="border-2 border-(--secondary-text) hover:border-(--primary-accent) text-(--secondary-text) hover:text-(--primary-accent) px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-(--color-hover)/50 backdrop-blur-sm transition-all duration-300 flex items-center gap-3"
             >
-              Download Resume
-            </a>
+              View Projects
+            </Link>
+            <a href="/resume/Resume.pdf" download className="hidden" />
           </div>
         </motion.div>
 

@@ -1,22 +1,69 @@
 // src/pages/Contact.tsx
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Github } from "lucide-react";
+import { FaLinkedin, FaGithub, FaPhoneAlt } from "react-icons/fa";
+import { IoIosMail } from "react-icons/io";
+import { FiMapPin } from "react-icons/fi";
+import { useState } from "react";
+import { sendContactEmail } from "../api/index";
+
+const contactInfo = [
+  {
+    icon: IoIosMail,
+    label: "Email",
+    value: "parthlagdhir2007@gmail.com",
+  },
+  { icon: FaPhoneAlt, label: "Phone", value: "+91 9624688925" },
+  { icon: FiMapPin, label: "Location", value: "Rajkot, Gujarat, India" },
+];
+
+const socials = [
+  {
+    icon: FaGithub,
+    href: "https://github.com/lagdhir-parth",
+    label: "GitHub",
+  },
+  {
+    icon: FaLinkedin,
+    href: "https://www.linkedin.com/in/lagdhir-parth-86662233b/",
+    label: "LinkedIn",
+  },
+  {
+    icon: IoIosMail,
+    href: "mailto:parthlagdhir2007@gmail.com",
+    label: "Email",
+  },
+];
 
 const Contact: React.FC = () => {
-  const contactInfo = [
-    {
-      icon: Mail,
-      label: "Email",
-      value: "parthlagdhir2007@gmail.com",
-    },
-    { icon: Phone, label: "Phone", value: "+91 9624688925" },
-    { icon: MapPin, label: "Location", value: "Rajkot, Gujarat, India" },
-  ];
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobileNumber: "",
+    subject: "",
+    message: "",
+  });
 
-  const socials = [
-    { icon: Github, href: "https://github.com/lagdhir-parth", label: "GitHub" },
-    // Add LinkedIn: { icon: Linkedin, href: '...', label: 'LinkedIn' }
-  ];
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically handle form submission, e.g., send data to an API
+    console.log("Form submitted:", formData);
+    await sendContactEmail(formData);
+    // Reset form after submission
+    setFormData({
+      name: "",
+      email: "",
+      mobileNumber: "",
+      subject: "",
+      message: "",
+    });
+  };
 
   return (
     <motion.main
@@ -89,35 +136,69 @@ const Contact: React.FC = () => {
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           className="space-y-6"
+          onSubmit={handleSubmit}
         >
           <h3 className="text-3xl font-bold text-(--primary-text) mb-8">
             Send Message
           </h3>
-          <div className="grid md:grid-cols-2 gap-6">
+
+          {/* Row 1: Name Field (Full width on mobile, spans full grid or splits depending on layout preference) */}
+          <div className="w-full">
             <input
               type="text"
+              name="name"
               placeholder="Your Name"
-              className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
-            />
-            <input
-              type="email"
-              placeholder="your.email@example.com"
+              value={formData.name}
+              onChange={handleChange}
               className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
             />
           </div>
+
+          {/* Row 2: Email & Mobile Number (Side-by-side on desktop, stacked on mobile) */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="email"
+              name="email"
+              placeholder="your.email@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
+            />
+            <input
+              type="tel"
+              name="mobileNumber"
+              placeholder="Mobile Number"
+              value={formData.mobileNumber}
+              onChange={handleChange}
+              className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
+            />
+          </div>
+
+          {/* Row 3: Subject */}
           <input
             type="text"
+            name="subject"
             placeholder="Subject"
+            value={formData.subject}
+            onChange={handleChange}
             className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300"
           />
+
+          {/* Row 4: Message Textarea */}
           <textarea
+            name="message"
             rows={6}
             placeholder="Your message..."
+            value={formData.message}
+            onChange={handleChange}
             className="w-full p-5 bg-(--color-hover)/50 backdrop-blur border border-(--chat-border)/50 rounded-2xl text-(--primary-text) placeholder-(--muted-text) focus:border-(--primary-accent) focus:outline-none focus:ring-2 focus:ring-(--primary-accent)/30 transition-all duration-300 resize-vertical"
           />
+
+          {/* Submit Button */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            type="submit"
             className="w-full bg-linear-to-r from-(--primary-accent) to-(--accent-hover) text-(--color-secondary) p-6 rounded-2xl font-bold text-xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
           >
             Send Message
