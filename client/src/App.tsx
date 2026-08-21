@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Navbar from "./components/Navbar";
 import "./App.css"; // Your Tailwind v4 + theme
-import ChatBotButton from "./components/ChatBotBtn";
 
 function App() {
   const Home = lazy(() => import("./pages/Home"));
@@ -28,7 +27,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </Suspense>
-      <ChatBotButton />
+      {/* <ChatBotButton /> */}
     </div>
   );
 }
