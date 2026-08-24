@@ -79,8 +79,8 @@ const Hero: React.FC = () => {
             <p className="text-xl md:text-2xl text-(--muted-text) max-w-md mx-auto md:mx-0 leading-relaxed">
               Freelance full-stack developer building production-ready MERN
               applications, APIs and responsive UIs. I help startups and small
-              businesses ship reliable web products — available for hire
-              remotely or on-site in Rajkot, Gujarat.
+              businesses ship reliable web products available for hire remotely
+              or on-site in Rajkot, Gujarat.
             </p>
           </div>
 

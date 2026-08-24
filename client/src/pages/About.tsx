@@ -109,6 +109,19 @@ const About: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="p-6 rounded-2xl bg-(--color-hover)/60 border border-(--chat-border)/50 shadow-lg">
             <h4 className="text-2xl font-bold text-(--primary-text)">
+              DJ PRAXX Website
+            </h4>
+            <p className="text-(--secondary-text) mt-3">
+              Built an immersive portfolio website for <b>DJ Praxx</b> using
+              React, featuring smooth Lenis scrolling, Framer Motion animations,
+              Howler.js audio playback, and a responsive Tailwind CSS UI.
+              Integrated Sanity CMS for easy content updates, delivering a fast
+              and engaging experience that showcases his music, brand, and
+              performances.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl bg-(--color-hover)/60 border border-(--chat-border)/50 shadow-lg">
+            <h4 className="text-2xl font-bold text-(--primary-text)">
               HRM — Human Resource Management
             </h4>
             <p className="text-(--secondary-text) mt-3">

@@ -5,6 +5,24 @@ import { useEffect } from "react";
 
 const projects = [
   {
+    title: "DJ PRAXX Website",
+    description:
+      "Built an immersive portfolio website for DJ Praxx using React, featuring smooth Lenis scrolling, Framer Motion animations, Howler.js audio playback, and a responsive Tailwind CSS UI. Integrated Sanity CMS for easy content updates, delivering a fast and engaging experience that showcases his music, brand, and performances.",
+    tech: [
+      "React",
+      "Sanity CMS",
+      "Tailwind CSS",
+      "Framer motion",
+      "Lenis.js",
+      "Howler.js",
+      "Vite",
+      "React Icons",
+    ],
+    live: "https://djpraxx.com",
+    image: "/projectimgs/DJ_Praxx_Home.webp",
+    bestProject: true,
+  },
+  {
     title: "HRM - Human Resource Management System",
     description:
       "A comprehensive SaaS recruitment platform featuring automated job postings, application tracking (ATS), and resume management. Integrated Jitsi for in-app video interviews, Cloudinary for media, and Resend for automated candidate communications. Built with a secure RBAC system, refresh-token workflows, and Node-Cron for scheduled recruitment tasks.",
